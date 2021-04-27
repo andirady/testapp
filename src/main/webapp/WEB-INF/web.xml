@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<web-app>
+    <servlet>
+        <servlet-name>myApi</servlet-name>
+        <servlet-class>com.kendra.testapp.server.MyApiImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>myApi</servlet-name>
+        <url-pattern>/testapp/myapi</url-pattern>
+    </servlet-mapping>
+    <welcome-file-list>
+        <welcome-file>testapp.html</welcome-file>
+    </welcome-file-list>
+</web-app>

@@ -1,0 +1,81 @@
+<project name="testapp">
+    <property environment="env" />
+    <property name="gwt.home" value="${env.GWT_HOME}" />
+
+    <path id="provided">
+        <fileset dir="${gwt.home}">
+            <include name="gwt-user.jar" />
+        </fileset>
+    </path>
+    <path id="compile">
+        <pathelement location="../../lib/pgw.common.jar" />
+        <pathelement location="${gwt.home}/validation-api-1.0.0.GA.jar" />
+    </path>
+    <path id="fullCompile">
+        <path refid="provided" />
+        <path refid="compile" />
+    </path>
+
+    <path id="runtime">
+        <pathelement location="${gwt.home}/gwt-servlet.jar" />
+    <!--
+        <pathelement location="${gwt.home}/gwt-servlet-deps.jar" />
+    -->
+    </path>
+
+    <path id="warJars">
+        <path refid="compile" />
+        <path refid="runtime" />
+    </path>
+
+    <target name="echo.classpath">
+        <echo>${toString:compile}</echo>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="build/classes/main" />
+        <javac srcDir="src/main/java" destDir="build/classes/main" classpathref="fullCompile" includeAntRuntime="false" />
+    </target>
+
+    <target name="copy.war">
+        <copy toDir="build/war">
+            <fileset dir="src/main/webapp" excludes=".*" />
+        </copy>
+        <copy toDir="build/war/WEB-INF/lib">
+            <path refid="compile" />
+        </copy>
+    </target>
+
+    <target name="gwtc" depends="compile">
+        <java fork="true" className="com.google.gwt.dev.Compiler">
+            <classpath>
+                <pathelement location="${gwt.home}/gwt-dev.jar" />
+                <pathelement location="${gwt.home}/validation-api-1.0.0.GA-sources.jar" />
+                <path refid="fullCompile" />
+                <pathelement location="src/main/java" />
+                <pathelement location="build/classes/main" />
+            </classpath>
+            <arg line="-sourceLevel auto" />
+            <arg line="-war build/war" />
+            <arg line="com.kendra.testapp.TestApp" />
+        </java>
+    </target>
+
+    <target name="build" depends="gwtc">
+        <mkdir dir="build/libs" />
+        <war destFile="build/libs/${ant.project.name}.war" baseDir="build/war">
+            <fileset dir="src/main/webapp" excludes=".*" />
+            <mappedresources>
+                <restrict>
+                    <path refid="warJars"/>
+                    <type type="file"/>
+                </restrict>
+                <chainedmapper>
+                    <flattenmapper/>
+                    <globmapper from="*" to="WEB-INF/lib/*"/>
+                </chainedmapper>
+            </mappedresources>
+            <classes dir="build/classes/main" />
+        </war>
+    </target>
+</project>

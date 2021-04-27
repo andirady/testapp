@@ -1,0 +1,9 @@
+<module rename-to="testapp">
+    <inherits name="com.google.gwt.user.User" />
+    <inherits name="com.kendra.pgw.common.eventNotifier.NoticeLib" />
+
+    <source path="client" />
+    <source path="share" />
+
+    <entry-point class="com.kendra.testapp.client.Main" />
+</module>
